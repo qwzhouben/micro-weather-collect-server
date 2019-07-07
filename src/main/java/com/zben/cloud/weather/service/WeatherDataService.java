@@ -25,4 +25,8 @@ public interface WeatherDataService {
      */
     WeatherResponse getDataByCityName(String cityName);
 
+    /**
+     * 根据城市id同步天气数据
+     */
+    void syncWeatherDataByCityId(String cityId);
 }

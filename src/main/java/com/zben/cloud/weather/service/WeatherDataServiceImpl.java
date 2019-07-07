@@ -43,6 +43,19 @@ public class WeatherDataServiceImpl implements WeatherDataService {
         return this.doGetWeather(uri);
     }
 
+    @Override
+    public void syncWeatherDataByCityId(String cityId) {
+        String uri = WEATHER_URI + "citykey=" + cityId;
+        //先从缓存中查询
+        String key = uri;
+
+        ValueOperations<String, String> opsForValue = redisTemplate.opsForValue();
+
+        //从服务中查询
+        saveDataToRedis(uri, key, null, opsForValue);
+
+    }
+
     private WeatherResponse doGetWeather(String uri) {
         //先从缓存中查询
         String key = uri;
@@ -57,13 +70,7 @@ public class WeatherDataServiceImpl implements WeatherDataService {
             strBody = opsForValue.get(key);
         } else {
             log.info("redis has not data");
-            //从服务中查询
-            ResponseEntity<String> respString = restTemplate.getForEntity(uri, String.class);
-            if (respString.getStatusCodeValue() == 200) {
-                strBody = respString.getBody();
-            }
-            //存储到缓存中
-            opsForValue.set(key, strBody, TIME_OUT, TimeUnit.SECONDS);
+            strBody = saveDataToRedis(uri, key, strBody, opsForValue);
         }
 
         try {
@@ -73,6 +80,17 @@ public class WeatherDataServiceImpl implements WeatherDataService {
         }
 
         return resp;
+    }
+
+    private String saveDataToRedis(String uri, String key, String strBody, ValueOperations<String, String> opsForValue) {
+        //从服务中查询
+        ResponseEntity<String> respString = restTemplate.getForEntity(uri, String.class);
+        if (respString.getStatusCodeValue() == 200) {
+            strBody = respString.getBody();
+        }
+        //存储到缓存中
+        opsForValue.set(key, strBody, TIME_OUT, TimeUnit.SECONDS);
+        return strBody;
     }
 
 }
