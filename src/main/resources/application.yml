@@ -1,9 +1,0 @@
-
-#\u70ED\u90E8\u7F72\u9759\u6001\u8D44\u6E90
-spring:
-  thymeleaf:
-    cache: false
-  devtools:
-    restart:
-      enabled: true
-debug: true
