@@ -25,7 +25,7 @@ public class WeatherDataJobConfiguration {
     //Trigger
     @Bean
     public Trigger weatherDataTrigger() {
-        ScheduleBuilder builder = SimpleScheduleBuilder.repeatSecondlyForever(5);
+        ScheduleBuilder builder = SimpleScheduleBuilder.repeatSecondlyForever(1800);
         return TriggerBuilder.newTrigger()
                 .withIdentity("weatherDataTrigger")
                 .forJob(weatherDataJobDetail())
